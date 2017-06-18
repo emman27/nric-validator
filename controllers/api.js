@@ -59,6 +59,9 @@ const getFullNric = (nric) => {
 };
 
 const isValid = (nric) => {
+  if (nric.length != 9){
+    return false;
+  }
   nric = nric.toUpperCase(); // Seriously why drive yourself crazy
   let last_char = nric.charAt(nric.length - 1);
   return last_char == getLastChar(nric);
