@@ -1,0 +1,22 @@
+{
+  "name": "nric-validator",
+  "version": "1.0.0",
+  "description": "Validates Singapore NRIC / FIN",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "nric",
+    "singapore",
+    "fin"
+  ],
+  "author": "Emmanuel Goh",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.4.1",
+    "express": "^4.15.3",
+    "nodemon": "^1.11.0"
+  }
+}
