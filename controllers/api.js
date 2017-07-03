@@ -1,6 +1,7 @@
 const express = require('express'),
   router = express.Router(),
-  async = require('async');
+  async = require('async'),
+  cors = require('cors');
 
 const isLocal = (nric) => {
   return nric.startsWith('S') || nric.startsWith('T');
@@ -81,6 +82,8 @@ const isValid = (nric) => {
 //     res.json({data: results});
 //   });
 // });
+
+router.use(cors());
 
 router.post('/autocomplete', (req, res) => {
   async.map(req.body.nrics, (nric, callback) => {
