@@ -66,5 +66,9 @@ describe('First character tests', () => {
       expect(isValid('S0000001')).to.be.false;
       expect(isValid('S0000001D')).to.be.false;
     });
+
+    it('Should return correct  value of NRIC if wrong', () => {
+      expect(getFullNric('S1234567B')).to.equal('S1234567D');
+    });
   });
 });

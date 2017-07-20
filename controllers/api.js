@@ -3,23 +3,17 @@ const express = require('express'),
   async = require('async'),
   cors = require('cors');
 
-const isLocal = (nric) => {
-  return nric.startsWith('S') || nric.startsWith('T');
-};
+const isLocal = nric => nric.startsWith('S') || nric.startsWith('T');
 
-const isForeign = (nric) => {
-  return nric.startsWith('F') || nric.startsWith('G');
-};
+const isForeign = nric => nric.startsWith('F') || nric.startsWith('G');
 
-const isRecent = (nric) => {
-  return nric.startsWith('T') || nric.startsWith('G');
-};
+const isRecent = nric => nric.startsWith('T') || nric.startsWith('G');
 
 const getNRICSum = (nric) => {
   const MULTIPLIERS = [2, 7, 6, 5, 4, 3, 2];
   let digits = Array.from(nric.slice(1, 8)),
     sum = 0;
-  for (let [index, digit] of digits.entries()) {
+  for (const [index, digit] of digits.entries()) {
     sum += parseInt(digit) * MULTIPLIERS[index];
   }
   if (isRecent(nric)) sum += FIRST_CHAR_BONUS;
@@ -36,35 +30,37 @@ const getLastChar = (nric) => {
     FIRST_CHAR_BONUS = 4,
     MODULO = 11;
 
-  let last_char = nric.charAt(nric.length - 1);
+  const last_char = nric.charAt(nric.length - 1);
 
-  let sum = getNRICSum(nric);
+  const sum = getNRICSum(nric);
 
   if (isLocal(nric)) {
     return CHAR_MAP_LOCAL[sum % MODULO];
   } else if (isForeign(nric)) {
     return CHAR_MAP_FOREIGN[sum % MODULO];
-  } else {
-    return null;
   }
+  return null;
 };
 
 const getFullNric = (nric) => {
-  if (nric.length == 9){
+  if (isValid(nric)) {
     return nric;
   }
-  if (nric.length != 8){
-    return null;
+  if (nric.length === 8 && getLastChar(nric)) {
+    return nric + getLastChar(nric);
   }
-  return nric + getLastChar(nric);
+  if (nric.length === 9 && getLastChar(nric.slice(0, 8))) {
+    return nric.slice(0, 8) + getLastChar(nric);
+  }
+  return null;
 };
 
 const isValid = (nric) => {
-  if (nric.length != 9){
+  if (nric.length != 9) {
     return false;
   }
   nric = nric.toUpperCase(); // Seriously why drive yourself crazy
-  let last_char = nric.charAt(nric.length - 1);
+  const last_char = nric.charAt(nric.length - 1);
   return last_char == getLastChar(nric);
 };
 
@@ -86,14 +82,12 @@ const isValid = (nric) => {
 router.use(cors());
 
 router.post('/autocomplete', (req, res) => {
-  async.map(req.body.nrics, (nric, callback) => {
-    return callback(null, {
-      nric: nric,
-      full: getFullNric(nric),
-      valid: isValid(nric)
-    });
-  }, (err, results) => {
-    res.json({data: results});
+  async.map(req.body.nrics, (nric, callback) => callback(null, {
+    nric,
+    full: getFullNric(nric),
+    valid: isValid(nric),
+  }), (err, results) => {
+    res.json({ data: results });
   });
 });
 
