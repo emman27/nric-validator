@@ -1,4 +1,4 @@
-/*jshint expr: true*/
+/* jshint expr: true*/
 // This line allows expect clauses to pass jshint
 
 const rewire = require('rewire'),
@@ -69,6 +69,11 @@ describe('First character tests', () => {
 
     it('Should return correct  value of NRIC if wrong', () => {
       expect(getFullNric('S1234567B')).to.equal('S1234567D');
+    });
+
+    it('Should also work for new NRIC / FIN numbers', () => {
+      expect(getFullNric('G1234567D')).to.equal('G1234567X');
+      expect(getFullNric('T1234567D')).to.equal('T1234567J');
     });
   });
 });
